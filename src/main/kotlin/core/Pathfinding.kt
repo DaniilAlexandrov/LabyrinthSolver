@@ -5,6 +5,7 @@ import core.structures.createMatrix
 import kotlin.math.abs
 import kotlin.math.min
 
+// A* algorithm with static obstacles.
 class Pathfinding(private val width: Int, private val height: Int, private val obstacles:List<Node>) {
 
     private val grid = createMatrix(width, height, Node())

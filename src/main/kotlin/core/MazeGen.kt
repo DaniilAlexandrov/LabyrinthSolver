@@ -19,8 +19,7 @@ class MazeGen(private val stageWidth: Int, private val stageHeight: Int, private
         const val floor = ' '
         const val corridor = ' '
         const val door = ' '
-        const val player = '@'
-        const val light = '*'
+
         val cardinals = arrayOf(
                 Vector2(0, -1), // Up
                 Vector2(0, 1),  // Down
@@ -113,6 +112,9 @@ class MazeGen(private val stageWidth: Int, private val stageHeight: Int, private
         }
     }
 
+    /* Implementation of 'growing tree' algorithm
+    Peeked at http://www.astrolog.org/labyrnth/algrithm.htm */
+
     private fun growMaze(startX: Int, startY: Int) {
         val cells = LinkedList<Vector2>()
         var lastDirection = Vector2()
@@ -157,6 +159,7 @@ class MazeGen(private val stageWidth: Int, private val stageHeight: Int, private
                 }
             }
         }
+
     private fun connectRegions() {
         for (i in 0 until rooms.count()) {
             var connections = 0

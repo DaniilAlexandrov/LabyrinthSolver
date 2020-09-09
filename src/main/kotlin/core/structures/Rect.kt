@@ -1,6 +1,6 @@
 package core.structures
 
-data class Rect(val x: Int, val y:Int, val width: Int, val height:Int) {
+class Rect(val x: Int, val y:Int, private val width: Int, private val height:Int) {
 
     private val bottomLeft = Coordinate(x, y)
     private val topLeft = Coordinate(x, y + height)

@@ -3,7 +3,7 @@ package core.structures
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-data class Line(val x1: Int, val y1: Int, val x2: Int, val y2: Int) {
+class Line(private val x1: Int, private val y1: Int, private val x2: Int, private val y2: Int) {
 
     val start = Vector2(x1, y1)
 

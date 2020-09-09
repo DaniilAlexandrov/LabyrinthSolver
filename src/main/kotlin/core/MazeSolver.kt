@@ -3,10 +3,12 @@ package core
 import core.structures.Matrix
 import core.structures.Node
 
-class MazeSolver(private val width: Int, private val height: Int) {
+class MazeSolver(val width: Int, val height: Int) {
 
-    val maze = MazeGen(width, height, 0, 3, 4, 50, false)
-            .generateMaze()
+    private val gen =
+            MazeGen(width, height, 0, 3, 4, 50, false)
+    val maze = gen.generateMaze()
+
     private val obstacles = generateObstacles(maze)
 
     private val pathfinding = Pathfinding(width, height, obstacles)
@@ -15,7 +17,7 @@ class MazeSolver(private val width: Int, private val height: Int) {
         val resList = mutableListOf<Node>()
         for (x in 0 until maze.width)
             for (y in 0 until maze.height)
-                if (maze[x,y] == '#')
+                if (maze[x,y] == MazeGen.wall)
                     resList.add(Node(x, y))
         return resList
     }
@@ -66,6 +68,20 @@ class MazeSolver(private val width: Int, private val height: Int) {
         else println("Path could not be found")
     }
 
+    fun findPath(start: Node, end: Node): List<Node> = pathfinding.findPath(start.x, start.y, end.x, end.y)
+
+    fun isObstacle(node: Node) = obstacles.contains(node)
+
+    fun getWalkableNodes(): List<Node> {
+        val resList = mutableListOf<Node>()
+        for (x in 0 until maze.width)
+            for (y in 0 until maze.height) {
+                val node = Node(x, y)
+                if (!obstacles.contains(node))
+                    resList.add(node)
+            }
+        return resList
+    }
 }
 
 fun main() {
