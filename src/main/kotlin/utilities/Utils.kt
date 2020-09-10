@@ -11,6 +11,8 @@ object Utils {
         return this[rnd]
     }
 
+    val numberRegex = Regex("[0-9]+")
+
     fun writeIntoFile(path: String, contents: MazeGen) {
         val file = File(path)
         file.writeText(contents.toString())

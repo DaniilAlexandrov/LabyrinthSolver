@@ -83,9 +83,3 @@ class MazeSolver(val width: Int, val height: Int) {
         return resList
     }
 }
-
-fun main() {
-    val a = MazeSolver(51, 51)
-    //a.configure()
-    println(a.maze)
-}

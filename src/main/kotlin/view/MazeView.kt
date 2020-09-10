@@ -1,7 +1,10 @@
 package view
 
 import core.structures.Node
+import utilities.Utils.numberRegex
+import javafx.application.Platform
 import javafx.scene.control.Label
+import javafx.scene.control.TextInputDialog
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
@@ -9,47 +12,58 @@ import javafx.scene.shape.Rectangle
 import javafx.scene.text.Font
 import tornadofx.*
 
+
 class MazeView: View() {
 
     override val root = Pane()
     private val size = 51
     private val pathColour = c("7e75ff")
 
-    private var controller = MazeController(size)
-
-    private val preferredWidth = 600.0
-    private val boxWidth = (preferredWidth / controller.sWidth).toInt().toDouble()
-    private val preferredHeight = 600.0
-    private val boxHeight = (preferredHeight / controller.sHeight).toInt().toDouble()
-
+    private lateinit var controller: MazeController
 
     private val rectNodeDictionary = mutableMapOf<Rectangle, Node>()
-    private var alertPopup: Label
+    private lateinit var alertPopup: Label
 
-    //var test = ""
+    private val minMazeSideConstraint = 5
+    private val maxMazeSideConstraint = 101
+    private val widthOffset = 1
+    private val heightOffset = 35
+    private val popupOffset = 125
+    private val buttonOffset = 10
 
     init {
-        /*dialog {
-            label {
-                font = Font.font(20.0)
-                text = "Enter maze side length"
-            }
-            spacing = 10.0
-            val field = textfield()
-            add(field)
-            button {
-                text = "OK"
-                action {
-                    test = field.text
-                    println(test.toInt())
-                    controller = initializeController(test.toInt())
-                }
-            }
-        }*/
-        title = "Labyrinth"
+        initializeIntroDialogue()
+    }
+
+    private fun initializeIntroDialogue(): TextInputDialog {
+        var dialogue = TextInputDialog()
+        dialogue.title = "Maze size"
+        dialogue.headerText = ""
+        dialogue.contentText = "Maze size length (odd number between $minMazeSideConstraint and $maxMazeSideConstraint)"
+
+        if (dialogue.showAndWait().isPresent) {
+            val tmpRes = dialogue.result
+            if (tmpRes.matches(numberRegex) && tmpRes.toInt() % 2 == 1 &&
+                    tmpRes.toInt() in minMazeSideConstraint..maxMazeSideConstraint)
+                initializeScene(root, tmpRes.toInt())
+            else
+                dialogue = initializeIntroDialogue()
+        } else {
+            Platform.exit()
+        }
+        return dialogue
+    }
+
+    private fun initializeScene(root: Pane, sideSize: Int) {
+        controller = MazeController(sideSize)
         with(root) {
-            prefWidth = size * boxWidth - 1
-            prefHeight = size * boxHeight + 50
+            title = "Labyrinth"
+            val preferredWidth = 600.0
+            val boxWidth = (preferredWidth / controller.sWidth).toInt().toDouble()
+            val preferredHeight = 600.0
+            val boxHeight = (preferredHeight / controller.sHeight).toInt().toDouble()
+            prefWidth = sideSize * boxWidth - widthOffset
+            prefHeight = sideSize * boxHeight + heightOffset
             var xPos = -boxWidth
             var yPos: Double
             for (x in 0 until controller.sWidth) {
@@ -73,13 +87,13 @@ class MazeView: View() {
             }
             alertPopup = label {
                 font = Font.font(25.0)
-                layoutY = size * boxHeight
-                layoutX += 125.0
+                layoutY = sideSize * boxHeight
+                layoutX += popupOffset
                 text = ""
             }
             add(alertPopup)
             button("Find Path") {
-                layoutY = size * boxHeight + 10
+                layoutY = sideSize * boxHeight + buttonOffset
                 action {
                     val path = controller.findPath()
                     if (path.isEmpty())
@@ -91,9 +105,6 @@ class MazeView: View() {
             }
         }
     }
-
-    //private fun initializeController(size: Int): MazeController = MazeController(size)
-
     private fun setAlertPopup(active: Boolean, text: String) {
         if (!active)
             alertPopup.text = ""
