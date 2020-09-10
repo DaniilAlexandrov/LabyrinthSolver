@@ -17,6 +17,8 @@ class MazeController(private val size: Int) {
 
     fun isObstacle(node: Node) = solver.isObstacle(node)
     fun isWall(x: Int, y: Int) = solver.maze[x, y] == MazeGen.wall
-    fun findPath() = solver.findPath(startNode, endNode)
-    val startAndDestinationExist = startNode != Node(-1, -1) && endNode != Node(-1, -1)
+    fun findPath() =
+            if (startNode != Node(-1, -1) && endNode != Node(-1, -1))
+            solver.findPath(startNode, endNode)
+            else emptyList()
 }

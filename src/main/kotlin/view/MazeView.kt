@@ -13,8 +13,9 @@ class MazeView: View() {
 
     override val root = Pane()
     private val size = 51
+    private val pathColour = c("7e75ff")
 
-    private val controller = MazeController(size)
+    private var controller = MazeController(size)
 
     private val preferredWidth = 600.0
     private val boxWidth = (preferredWidth / controller.sWidth).toInt().toDouble()
@@ -25,7 +26,26 @@ class MazeView: View() {
     private val rectNodeDictionary = mutableMapOf<Rectangle, Node>()
     private var alertPopup: Label
 
+    //var test = ""
+
     init {
+        /*dialog {
+            label {
+                font = Font.font(20.0)
+                text = "Enter maze side length"
+            }
+            spacing = 10.0
+            val field = textfield()
+            add(field)
+            button {
+                text = "OK"
+                action {
+                    test = field.text
+                    println(test.toInt())
+                    controller = initializeController(test.toInt())
+                }
+            }
+        }*/
         title = "Labyrinth"
         with(root) {
             prefWidth = size * boxWidth - 1
@@ -61,15 +81,18 @@ class MazeView: View() {
             button("Find Path") {
                 layoutY = size * boxHeight + 10
                 action {
-/*                    if (!controller.startAndDestinationExist)
+                    val path = controller.findPath()
+                    if (path.isEmpty())
                         setAlertPopup(true, "Specify start and destination points")
                     else
-                        setAlertPopup(false, "")*/
-                    markPath(controller.findPath())
+                        setAlertPopup(false, "")
+                        markPath(path)
                 }
             }
         }
     }
+
+    private fun initializeController(size: Int): MazeController = MazeController(size)
 
     private fun setAlertPopup(active: Boolean, text: String) {
         if (!active)
@@ -110,6 +133,6 @@ class MazeView: View() {
     }
 
     private fun markPath(path: List<Node>) {
-        path.filter { it != path.first() }.filter { it != path.last() }.forEach { getRect(it).fill = Color.BLUE }
+        path.filter { it != path.first() }.filter { it != path.last() }.forEach { getRect(it).fill = pathColour }
     }
 }
