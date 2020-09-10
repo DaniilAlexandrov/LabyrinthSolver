@@ -130,11 +130,7 @@ class MazeGen(private val stageWidth: Int, private val stageHeight: Int, private
             val cell = cells.last()
             val unmadeCells = mutableListOf<Vector2>()
             for (element in cardinals) {
-
-                val tmp1 = Vector2(cell.x + element.x, cell.y + element.y) // FIX OPERATOR OVERLOAD
-                val tmp2 = Vector2(cell.x + element.x * 2, cell.y + element.y * 2)
-
-                if (canCarve(tmp1) && canCarve(tmp2))
+                if (canCarve(cell + element) && canCarve(cell + element * 2))
                     unmadeCells.add(element)
             }
                 if (unmadeCells.count() != 0) {
@@ -143,14 +139,11 @@ class MazeGen(private val stageWidth: Int, private val stageHeight: Int, private
                     else {
                         unmadeCells.randomElement()
                     }
-
-                    val tmp3 = Vector2(cell.x + dir.x, cell.y + dir.y) // FIX OPERATOR OVERLOAD
-                    val tmp4 = Vector2(cell.x + dir.x * 2, cell.y + dir.y * 2) // FIX OPERATOR OVERLOAD
-
-                    carve(tmp3.x, tmp3.y, corridor)
-                    carve(tmp4.x, tmp4.y, corridor)
-
-                    cells.addLast(tmp4)
+                    val tmp1 = cell + dir
+                    val tmp2 = cell + dir * 2
+                    carve(tmp1.x, tmp1.y, corridor)
+                    carve(tmp2.x, tmp2.y, corridor)
+                    cells.addLast(tmp2)
                     lastDirection = dir
                 }
                 else {
@@ -188,7 +181,8 @@ class MazeGen(private val stageWidth: Int, private val stageHeight: Int, private
                     2 -> {
                         line = Line(rooms[i].x + 2, rooms[i].yMax + 1, rooms[i].xMax, rooms[i].yMax + 1)
                         direction = down
-                    } else -> {
+                    }
+                    else -> {
                     line = Line(rooms[i].x, rooms[i].y + 1, rooms[i].x, rooms[i].yMax - 1)
                     direction = left
                 }
@@ -234,10 +228,7 @@ class MazeGen(private val stageWidth: Int, private val stageHeight: Int, private
                     continue
                 var exits = 0
                 for (element in cardinals) {
-                    val dir = element
-                    val tmp6 = Vector2(pos.x + dir.x, pos.y + dir.y)
-
-                    if (getTile(tmp6) != wall)
+                    if (getTile(pos + element) != wall)
                         exits++
 
                     if (exits != 1)

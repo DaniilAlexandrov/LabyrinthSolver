@@ -86,13 +86,13 @@ class MazeView: View() {
                         setAlertPopup(true, "Specify start and destination points")
                     else
                         setAlertPopup(false, "")
-                        markPath(path)
+                    markPath(path)
                 }
             }
         }
     }
 
-    private fun initializeController(size: Int): MazeController = MazeController(size)
+    //private fun initializeController(size: Int): MazeController = MazeController(size)
 
     private fun setAlertPopup(active: Boolean, text: String) {
         if (!active)

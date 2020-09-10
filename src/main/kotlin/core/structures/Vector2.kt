@@ -23,8 +23,6 @@ class Vector2(val x: Int, val y: Int) {
         return sqrt(x.toFloat().pow(2) + y.toFloat().pow(2))
     }
 
-    operator fun Vector2.plus(other: Vector2): Vector2 =
-            Vector2(x + other.x, y + other.y)
-
+    operator fun plus(other: Vector2): Vector2 = Vector2(x + other.x, y + other.y)
+    operator fun times(factor: Int): Vector2 = Vector2(x * factor, y * factor)
 }
-
