@@ -31,7 +31,7 @@ class MazeView: View() {
 
     private val rectNodeDictionary = mutableMapOf<Rectangle, Node>()
     private val minMazeSideConstraint = 5
-    private val maxMazeSideConstraint = 101
+    private val maxMazeSideConstraint = 151
     private val widthOffset = 1
     private val heightOffset = 37
     private val popupOffset = 125
@@ -64,9 +64,9 @@ class MazeView: View() {
         controller = MazeController(sideSize)
         with(root) {
             title = "Labyrinth"
-            val preferredWidth = 600.0
+            val preferredWidth = 750.0
             val boxWidth = (preferredWidth / controller.sWidth).toInt().toDouble()
-            val preferredHeight = 600.0
+            val preferredHeight = 750.0
             val boxHeight = (preferredHeight / controller.sHeight).toInt().toDouble()
             prefWidth = sideSize * boxWidth - widthOffset
             prefHeight = sideSize * boxHeight + heightOffset
