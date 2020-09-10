@@ -133,6 +133,6 @@ class MazeView: View() {
     }
 
     private fun markPath(path: List<Node>) {
-        path.filter { it != path.first() }.filter { it != path.last() }.forEach { getRect(it).fill = pathColour }
+        path.filter { it != path.first() && it != path.last() }.forEach { getRect(it).fill = pathColour }
     }
 }

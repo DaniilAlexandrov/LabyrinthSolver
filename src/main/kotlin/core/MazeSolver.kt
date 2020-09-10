@@ -6,7 +6,7 @@ import core.structures.Node
 class MazeSolver(val width: Int, val height: Int) {
 
     private val gen =
-            MazeGen(width, height, 0, 3, 4, 50, false)
+            MazeGen(width, height, 0, 3, 4, 70, false)
     val maze = gen.generateMaze()
 
     private val obstacles = generateObstacles(maze)
@@ -86,6 +86,6 @@ class MazeSolver(val width: Int, val height: Int) {
 
 fun main() {
     val a = MazeSolver(51, 51)
-    a.configure()
+    //a.configure()
     println(a.maze)
 }

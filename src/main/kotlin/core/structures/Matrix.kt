@@ -52,13 +52,6 @@ class MatrixImpl<E>(override val width: Int, override val height: Int, e: E) : M
         return res
     }
 
-/*    override fun getColumn(x: Int): List<E> {
-        val res = mutableListOf<E>()
-        for (y in 0 until height)
-            res.add(matrixSkeleton[x][y])
-        return res
-    }*/
-
     override fun equals(other: Any?) =
             other is MatrixImpl<*> && height == other.height && width == other.width &&
                     matrixSkeleton == other.matrixSkeleton
