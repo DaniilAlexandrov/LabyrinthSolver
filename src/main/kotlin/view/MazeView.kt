@@ -16,18 +16,24 @@ import tornadofx.*
 class MazeView: View() {
 
     override val root = Pane()
-    private val size = 51
+
     private val pathColour = c("7e75ff")
 
-    private lateinit var controller: MazeController
+    private val spaceColour = Color.WHITE
+    private val startColour = Color.GREEN
+    private val finishColour = Color.RED
+    private val wallColour = Color.BLACK
 
-    private val rectNodeDictionary = mutableMapOf<Rectangle, Node>()
+    private lateinit var controller: MazeController
     private lateinit var alertPopup: Label
 
+    private val paintedNodes = mutableListOf<Node>()
+
+    private val rectNodeDictionary = mutableMapOf<Rectangle, Node>()
     private val minMazeSideConstraint = 5
     private val maxMazeSideConstraint = 101
     private val widthOffset = 1
-    private val heightOffset = 35
+    private val heightOffset = 37
     private val popupOffset = 125
     private val buttonOffset = 10
 
@@ -77,9 +83,9 @@ class MazeView: View() {
                         layoutX = xPos
                         layoutY = yPos
                         fill = if (controller.isWall(x, y))
-                            Color.BLACK
+                            wallColour
                         else
-                            Color.WHITE
+                            spaceColour
                     }
                     rectNodeDictionary[rect] = Node(x, y)
                     generateCallbacks(rect)
@@ -115,8 +121,9 @@ class MazeView: View() {
     private fun generateCallbacks(rect: Rectangle) {
         with(rect) {
             setOnMousePressed {
-                if (it.button == MouseButton.PRIMARY && !controller.isObstacle(rectNodeDictionary[rect]!!))
+                if (it.button == MouseButton.PRIMARY && !controller.isObstacle(rectNodeDictionary[rect]!!)) {
                     tagAsStart(rect)
+                }
                 else if (it.button == MouseButton.SECONDARY && !controller.isObstacle(rectNodeDictionary[rect]!!))
                     tagAsFinish(rect)
             }
@@ -132,18 +139,24 @@ class MazeView: View() {
     }
 
     private fun tagAsStart(rect: Rectangle) {
-        controller.walkableNodes.filter { it != controller.endNode }.forEach { getRect(it).fill = Color.WHITE }
-        rect.fill = Color.GREEN
+        getRect(controller.startNode).fill = spaceColour
+        paintedNodes.forEach { getRect(it).fill = spaceColour }
+        rect.fill = startColour
         controller.startNode = rectNodeDictionary[rect] ?: Node()
     }
 
     private fun tagAsFinish(rect: Rectangle) {
-        controller.walkableNodes.filter { it != controller.startNode }.forEach { getRect(it).fill = Color.WHITE }
-        rect.fill = Color.RED
+        getRect(controller.endNode).fill = spaceColour
+        paintedNodes.forEach {  getRect(it).fill = spaceColour }
+        rect.fill = finishColour
         controller.endNode = rectNodeDictionary[rect] ?: Node()
     }
 
     private fun markPath(path: List<Node>) {
-        path.filter { it != path.first() && it != path.last() }.forEach { getRect(it).fill = pathColour }
+        paintedNodes.clear()
+        path.filter { it != path.first() && it != path.last() }.forEach {
+            paintedNodes.add(it)
+            getRect(it).fill = pathColour
+        }
     }
 }
