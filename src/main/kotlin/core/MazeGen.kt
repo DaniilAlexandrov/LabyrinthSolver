@@ -8,7 +8,7 @@ import utilities.Utils.randomElement
 
 class MazeGen(private val stageWidth: Int, private val stageHeight: Int, private val numberRoomTries: Int,
               private val roomExtraSize: Int, private val extraConnectorChance: Int,
-              private val windingPercent: Int, private val removeDeadEnds: Boolean) {
+              private val windingPercent: Int) {
 
     private val rooms = mutableListOf<Rect>()
 
@@ -18,7 +18,7 @@ class MazeGen(private val stageWidth: Int, private val stageHeight: Int, private
         const val wall = '#'
         const val floor = ' '
         const val corridor = ' '
-        const val door = ' '
+        const val door = '|'
 
         val cardinals = arrayOf(
                 Vector2(0, -1), // Up
@@ -32,7 +32,7 @@ class MazeGen(private val stageWidth: Int, private val stageHeight: Int, private
         val right = Vector2(1, 0)
     }
 
-    fun generateMaze(): Matrix<Char> {
+    internal fun generateMaze(): Matrix<Char> {
         require (stageWidth % 2 != 0 || stageHeight % 2 != 0)
         fill(wall)
         addRooms()
@@ -40,8 +40,6 @@ class MazeGen(private val stageWidth: Int, private val stageHeight: Int, private
             for (j in 1 until stageWidth step 2)
                 growMaze(j, i)
         connectRegions()
-        if (removeDeadEnds)
-            removeDeadEnds()
 
         generateUnpassableBounds()
 
@@ -216,28 +214,6 @@ class MazeGen(private val stageWidth: Int, private val stageHeight: Int, private
                 return false
         }
         return true
-    }
-
-    private fun removeDeadEnds() {
-        var done = false
-        while (!done) {
-            done = true
-            for (i in 0 until stageWidth * stageHeight) {
-                val pos = Vector2(i % stageWidth, i / stageWidth)
-                if (getTile(pos) == wall)
-                    continue
-                var exits = 0
-                for (element in cardinals) {
-                    if (getTile(pos + element) != wall)
-                        exits++
-
-                    if (exits != 1)
-                        continue
-                    done = false
-                    setTile(pos, wall)
-                }
-            }
-        }
     }
 
     private fun generateUnpassableBounds() {

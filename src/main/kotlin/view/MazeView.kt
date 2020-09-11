@@ -68,9 +68,9 @@ class MazeView: View() {
         controller = MazeController(sideSize)
         with(root) {
             title = "Labyrinth"
-            val preferredWidth = 850.0
+            val preferredWidth = 750.0
             val boxWidth = (preferredWidth / controller.sWidth).toInt().toDouble()
-            val preferredHeight = 850.0
+            val preferredHeight = 750.0
             val boxHeight = (preferredHeight / controller.sHeight).toInt().toDouble()
             prefWidth = sideSize * boxWidth - widthOffset
             prefHeight = sideSize * boxHeight + heightOffset
@@ -114,8 +114,6 @@ class MazeView: View() {
                         markPath(path)
                         setAlertPopup("Path of ${path.size - 2} elements calculated for $pathTime ms")
                     }
-
-
                 }
             }
         }

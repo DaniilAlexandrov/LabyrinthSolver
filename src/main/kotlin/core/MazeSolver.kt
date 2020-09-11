@@ -6,8 +6,8 @@ import core.structures.Node
 class MazeSolver(val width: Int, val height: Int) {
 
     private val gen =
-            MazeGen(width, height, 0, 3, 4, 70, false)
-    val maze = gen.generateMaze()
+            MazeGen(width, height, 0, 3, 4, 70)
+    internal val maze = gen.generateMaze()
 
     private val obstacles = generateObstacles(maze)
 
@@ -54,6 +54,14 @@ class MazeSolver(val width: Int, val height: Int) {
         return Node(0, 0)
     }
 
+    internal fun locateCornerNode(top: Boolean, left: Boolean): Node {
+        return when (top to left) {
+            true to true -> locateTopLeftWalkableNode(maze)
+            true to false -> locateTopRightWalkableNode(maze)
+            false to true -> locateBottomLeftWalkableNode(maze)
+            else -> locateBottomRightWalkableNode(maze)
+        }
+    }
     fun configure() {
         val start = locateTopLeftWalkableNode(maze)
         val end = locateBottomRightWalkableNode(maze)
@@ -68,11 +76,11 @@ class MazeSolver(val width: Int, val height: Int) {
         else println("Path could not be found")
     }
 
-    fun findPath(start: Node, end: Node): List<Node> = pathfinding.findPath(start.x, start.y, end.x, end.y)
+    internal fun findPath(start: Node, end: Node): List<Node> = pathfinding.findPath(start.x, start.y, end.x, end.y)
 
-    fun isObstacle(node: Node) = obstacles.contains(node)
+    internal fun isObstacle(node: Node) = obstacles.contains(node)
 
-    fun getWalkableNodes(): List<Node> {
+    internal fun getWalkableNodes(): List<Node> {
         val resList = mutableListOf<Node>()
         for (x in 0 until maze.width)
             for (y in 0 until maze.height) {

@@ -1,3 +1,4 @@
+import core.MazeSolver
 import core.Pathfinding
 import core.structures.Node
 import org.junit.jupiter.api.Test
@@ -23,11 +24,21 @@ internal class PathfindingTests {
     }
 
     @Test
-    fun storyPathWithObstacles() {
+    fun shortPathWithObstacles() {
         val pathfinding = Pathfinding(5, 5, listOf(Node(1, 1), Node(1, 0)))
         val path = pathfinding.findPath(0,0, 2, 2)
         val expectedPath = listOf(Node(0,0), Node(0, 1), Node(0, 2), Node(1, 2),
                 Node(2, 2))
         assertEquals(path, expectedPath)
+    }
+
+    /* Generates a fairly huge maze with complex configuration which may
+     result into several seconds long computations */
+    @Test
+    fun complexConfigurationTopLeftBottomRightPathExistence() {
+        val solver = MazeSolver(251, 251)
+        val path = solver.findPath(solver.locateCornerNode(top = true, left = true),
+                solver.locateCornerNode(top = false, left = false))
+        assertEquals(path.isNotEmpty(), true)
     }
 }

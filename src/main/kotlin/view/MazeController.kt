@@ -4,21 +4,18 @@ import core.MazeGen
 import core.MazeSolver
 import core.structures.Node
 
-class MazeController(private val size: Int) {
+class MazeController(size: Int) {
 
     private val solver = MazeSolver(size, size)
 
     internal var startNode = Node(-1, -1)
     internal var endNode = Node(-1, -1)
 
-    val walkableNodes = solver.getWalkableNodes()
-    val sWidth = solver.width
-    val sHeight = solver.height
+    internal val sWidth = solver.width
+    internal val sHeight = solver.height
 
-    fun isObstacle(node: Node) = solver.isObstacle(node)
-    fun isWall(x: Int, y: Int) = solver.maze[x, y] == MazeGen.wall
-    fun findPath() =
-            if (startNode != Node(-1, -1) && endNode != Node(-1, -1))
-            solver.findPath(startNode, endNode)
-            else emptyList()
+    internal fun isObstacle(node: Node) = solver.isObstacle(node)
+    internal fun isWall(x: Int, y: Int) = solver.maze[x, y] == MazeGen.wall
+    internal fun findPath() = if (startNode != Node(-1, -1) && endNode != Node(-1, -1))
+        solver.findPath(startNode, endNode) else emptyList()
 }
