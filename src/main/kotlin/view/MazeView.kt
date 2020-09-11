@@ -31,10 +31,10 @@ class MazeView: View() {
 
     private val rectNodeDictionary = mutableMapOf<Rectangle, Node>()
     private val minMazeSideConstraint = 5
-    private val maxMazeSideConstraint = 151
+    private val maxMazeSideConstraint = 150
     private val widthOffset = 1
     private val heightOffset = 37
-    private val popupOffset = 125
+    private val popupOffset = 100
     private val buttonOffset = 10
 
     init {
@@ -45,13 +45,17 @@ class MazeView: View() {
         var dialogue = TextInputDialog()
         dialogue.title = "Maze size"
         dialogue.headerText = ""
-        dialogue.contentText = "Maze size length (odd number between $minMazeSideConstraint and $maxMazeSideConstraint)"
+        dialogue.contentText = "Maze size length (random number between $minMazeSideConstraint and $maxMazeSideConstraint)"
 
         if (dialogue.showAndWait().isPresent) {
             val tmpRes = dialogue.result
-            if (tmpRes.matches(numberRegex) && tmpRes.toInt() % 2 == 1 &&
-                    tmpRes.toInt() in minMazeSideConstraint..maxMazeSideConstraint)
-                initializeScene(root, tmpRes.toInt())
+            if (tmpRes.matches(numberRegex) && tmpRes.toInt() in minMazeSideConstraint..maxMazeSideConstraint) {
+                if (tmpRes.toInt() % 2 == 0)
+                    initializeScene(root, tmpRes.toInt() + 1)
+                else
+                    initializeScene(root, tmpRes.toInt())
+            }
+
             else
                 dialogue = initializeIntroDialogue()
         } else {
@@ -64,9 +68,9 @@ class MazeView: View() {
         controller = MazeController(sideSize)
         with(root) {
             title = "Labyrinth"
-            val preferredWidth = 750.0
+            val preferredWidth = 850.0
             val boxWidth = (preferredWidth / controller.sWidth).toInt().toDouble()
-            val preferredHeight = 750.0
+            val preferredHeight = 850.0
             val boxHeight = (preferredHeight / controller.sHeight).toInt().toDouble()
             prefWidth = sideSize * boxWidth - widthOffset
             prefHeight = sideSize * boxHeight + heightOffset
@@ -101,20 +105,22 @@ class MazeView: View() {
             button("Find Path") {
                 layoutY = sideSize * boxHeight + buttonOffset
                 action {
+                    val tmpTime = System.currentTimeMillis()
                     val path = controller.findPath()
+                    val pathTime = System.currentTimeMillis() - tmpTime
                     if (path.isEmpty())
-                        setAlertPopup(true, "Specify start and destination points")
-                    else
-                        setAlertPopup(false, "")
-                    markPath(path)
+                        setAlertPopup("Specify start and destination points")
+                    else {
+                        markPath(path)
+                        setAlertPopup("Path of ${path.size - 2} elements calculated for $pathTime ms")
+                    }
+
+
                 }
             }
         }
     }
-    private fun setAlertPopup(active: Boolean, text: String) {
-        if (!active)
-            alertPopup.text = ""
-        else
+    private fun setAlertPopup(text: String) {
             alertPopup.text = text
     }
 
