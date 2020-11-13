@@ -27,15 +27,16 @@ class MazeView: View() {
     private lateinit var controller: MazeController
     private lateinit var alertPopup: Label
 
-    private val paintedNodes = mutableListOf<Node>()
+    private var paintedNodes = mutableListOf<Node>()
 
-    private val rectNodeDictionary = mutableMapOf<Rectangle, Node>()
+    private var rectNodeDictionary = mutableMapOf<Rectangle, Node>()
     private val minMazeSideConstraint = 5
     private val maxMazeSideConstraint = 150
     private val widthOffset = 1
     private val heightOffset = 37
     private val popupOffset = 100
     private val buttonOffset = 10
+    private val mazeButtonOffset = 572.0
 
     init {
         initializeIntroDialogue()
@@ -69,9 +70,9 @@ class MazeView: View() {
         with(root) {
             title = "Labyrinth"
             val preferredWidth = 750.0
-            val boxWidth = (preferredWidth / controller.sWidth).toInt().toDouble()
+            val boxWidth = preferredWidth / sideSize
             val preferredHeight = 750.0
-            val boxHeight = (preferredHeight / controller.sHeight).toInt().toDouble()
+            val boxHeight = preferredHeight / sideSize
             prefWidth = sideSize * boxWidth - widthOffset
             prefHeight = sideSize * boxHeight + heightOffset
             var xPos = -boxWidth
@@ -102,22 +103,40 @@ class MazeView: View() {
                 text = ""
             }
             add(alertPopup)
-            button("Find Path") {
-                layoutY = sideSize * boxHeight + buttonOffset
-                action {
-                    val tmpTime = System.currentTimeMillis()
-                    val path = controller.findPath()
-                    val pathTime = System.currentTimeMillis() - tmpTime
-                    if (path.isEmpty())
-                        setAlertPopup("Specify start and destination points")
-                    else {
-                        markPath(path)
-                        setAlertPopup("Path of ${path.size - 2} elements calculated for $pathTime ms")
+            hbox {
+                layoutY = preferredHeight
+                button("Find Path") {
+                    layoutY = sideSize * boxHeight + buttonOffset
+                    action {
+                        val tmpTime = System.currentTimeMillis()
+                        val path = controller.findPath()
+                        val pathTime = System.currentTimeMillis() - tmpTime
+                        if (path.size < 2)
+                            setAlertPopup("Specify start and destination points")
+                        else {
+                            markPath(path)
+                            setAlertPopup("Path of ${path.size - 2} elements calculated for $pathTime ms")
+                        }
+                    }
+                }
+                spacing = mazeButtonOffset
+                button("Regenerate Maze") {
+                    action {
+                        reinitializeScene(sideSize)
                     }
                 }
             }
         }
     }
+
+    private fun reinitializeScene(sideSize: Int) {
+        root.clear()
+        rectNodeDictionary = mutableMapOf()
+        paintedNodes = mutableListOf()
+        controller = MazeController(sideSize)
+        initializeScene(root, sideSize)
+    }
+
     private fun setAlertPopup(text: String) {
             alertPopup.text = text
     }
