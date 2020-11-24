@@ -56,7 +56,6 @@ class MazeView: View() {
                 else
                     initializeScene(root, tmpRes.toInt())
             }
-
             else
                 dialogue = initializeIntroDialogue()
         } else {
@@ -111,11 +110,15 @@ class MazeView: View() {
                         val tmpTime = System.currentTimeMillis()
                         val path = controller.findPath()
                         val pathTime = System.currentTimeMillis() - tmpTime
-                        if (path.size < 2)
-                            setAlertPopup("Specify start and destination points")
-                        else {
-                            markPath(path)
-                            setAlertPopup("Path of ${path.size - 2} elements calculated for $pathTime ms")
+                        when {
+                            path.size  < 2 -> setAlertPopup("Specify start and destination points")
+                            path.size == 2 -> setAlertPopup("Select nonadjacent points")
+                            path.isEmpty() && controller.startNodeIsChanged()
+                                    && controller.endNodeIsChanged() -> setAlertPopup("Path cannot be found")
+                            else -> {
+                                markPath(path)
+                                setAlertPopup("Path of ${path.size - 2} elements calculated for $pathTime ms")
+                            }
                         }
                     }
                 }

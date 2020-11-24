@@ -14,6 +14,14 @@ class MazeController(size: Int) {
     internal val sWidth = solver.width
     internal val sHeight = solver.height
 
+    internal fun startNodeIsChanged(): Boolean {
+        return startNode != Node(-1, -1)
+    }
+
+    internal fun endNodeIsChanged(): Boolean {
+        return endNode != Node(-1, -1)
+    }
+
     internal fun isObstacle(node: Node) = solver.isObstacle(node)
     internal fun isWall(x: Int, y: Int) = solver.maze[x, y] == MazeGen.wall
     internal fun findPath() = if (startNode != Node(-1, -1) && endNode != Node(-1, -1))
