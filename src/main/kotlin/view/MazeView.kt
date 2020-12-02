@@ -36,7 +36,9 @@ class MazeView: View() {
     private val heightOffset = 37
     private val popupOffset = 100
     private val buttonOffset = 10
-    private val mazeButtonOffset = 572.0
+    private val mazeButtonOffset = 572.0 //530.0
+
+    private var isRegenerated = false
 
     init {
         initializeIntroDialogue()
@@ -99,7 +101,10 @@ class MazeView: View() {
                 font = Font.font(25.0)
                 layoutY = sideSize * boxHeight
                 layoutX += popupOffset
-                text = ""
+                text = if (isRegenerated)
+                    "Maze has been regenerated"
+                else
+                    ""
             }
             add(alertPopup)
             hbox {
@@ -133,6 +138,7 @@ class MazeView: View() {
     }
 
     private fun reinitializeScene(sideSize: Int) {
+        isRegenerated = true
         root.clear()
         rectNodeDictionary = mutableMapOf()
         paintedNodes = mutableListOf()
@@ -165,17 +171,21 @@ class MazeView: View() {
     }
 
     private fun tagAsStart(rect: Rectangle) {
-        getRect(controller.startNode).fill = spaceColour
-        paintedNodes.forEach { getRect(it).fill = spaceColour }
-        rect.fill = startColour
-        controller.startNode = rectNodeDictionary[rect] ?: Node()
+        if (rect.fill != finishColour && rect.fill != startColour) {
+            getRect(controller.startNode).fill = spaceColour
+            paintedNodes.forEach { getRect(it).fill = spaceColour }
+            rect.fill = startColour
+            controller.startNode = rectNodeDictionary[rect] ?: Node()
+        }
     }
 
     private fun tagAsFinish(rect: Rectangle) {
-        getRect(controller.endNode).fill = spaceColour
-        paintedNodes.forEach {  getRect(it).fill = spaceColour }
-        rect.fill = finishColour
-        controller.endNode = rectNodeDictionary[rect] ?: Node()
+        if (rect.fill != finishColour && rect.fill != startColour) {
+            getRect(controller.endNode).fill = spaceColour
+            paintedNodes.forEach { getRect(it).fill = spaceColour }
+            rect.fill = finishColour
+            controller.endNode = rectNodeDictionary[rect] ?: Node()
+        }
     }
 
     private fun markPath(path: List<Node>) {
