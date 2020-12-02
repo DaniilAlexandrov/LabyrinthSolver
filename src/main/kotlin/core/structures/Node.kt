@@ -1,6 +1,6 @@
 package core.structures
 
-data class Node(var x: Int, var y: Int) {
+data class Node(var x: Int, var y: Int): Comparable<Node> {
 
     var gCost = 0
     var hCost = 0
@@ -12,4 +12,11 @@ data class Node(var x: Int, var y: Int) {
         fCost = hCost + gCost
     }
     constructor(): this(0,0)
+
+    override fun compareTo(other: Node): Int {
+        return if (this.fCost < other.fCost)
+            -1
+        else
+            1
+    }
 }

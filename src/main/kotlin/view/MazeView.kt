@@ -31,7 +31,7 @@ class MazeView: View() {
 
     private var rectNodeDictionary = mutableMapOf<Rectangle, Node>()
     private val minMazeSideConstraint = 5
-    private val maxMazeSideConstraint = 150
+    private val maxMazeSideConstraint = 250
     private val widthOffset = 1
     private val heightOffset = 37
     private val popupOffset = 100

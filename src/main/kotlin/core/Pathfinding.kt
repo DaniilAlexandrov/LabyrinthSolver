@@ -2,6 +2,7 @@ package core
 
 import core.structures.Node
 import core.structures.createMatrix
+import java.util.*
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -11,8 +12,8 @@ class Pathfinding(private val width: Int, private val height: Int, private val o
     private val grid = createMatrix(width, height, Node())
     private val moveStraightCost = 10
     private val moveDiagonallyCost = 14
-    private var openList = mutableListOf<Node>()
-    private var closedList = mutableListOf<Node>()
+    private var openList = PriorityQueue<Node>()
+    private var closedList = mutableSetOf<Node>()
 
     init {
         for (x in 0 until width)
@@ -27,10 +28,11 @@ class Pathfinding(private val width: Int, private val height: Int, private val o
 
         manageUnpassability(obstacles)
 
-        openList = mutableListOf(startNode)
-        closedList = mutableListOf()
+        openList = PriorityQueue()
+        openList.add(startNode)
+        closedList = mutableSetOf()
         for (x in 0 until width)
-            for(y in 0 until  height) {
+            for (y in 0 until height) {
                 val node = getNode(x, y)
                 node.gCost = Int.MAX_VALUE
                 node.calculateFCost()
@@ -40,8 +42,8 @@ class Pathfinding(private val width: Int, private val height: Int, private val o
         startNode.hCost = calculateDistanceCost(startNode, endNode)
         startNode.calculateFCost()
 
-        while(openList.count() > 0) {
-            val currentNode = getLowestFCostNode(openList)
+        while (openList.count() > 0) {
+            val currentNode = openList.peek()//getLowestFCostNode(openList)
             if (currentNode == endNode)
                 return calculatePath(endNode)
             openList.remove(currentNode)
@@ -49,7 +51,7 @@ class Pathfinding(private val width: Int, private val height: Int, private val o
 
             for (neighbourNode in getNeighbours(currentNode)) {
                 if (closedList.contains(neighbourNode)) continue
-                if (!neighbourNode.isWalkable/*obstacles.contains(neighbourNode)*/) {
+                if (!neighbourNode.isWalkable) {
                     closedList.add(neighbourNode)
                     continue
                 }
@@ -110,14 +112,5 @@ class Pathfinding(private val width: Int, private val height: Int, private val o
         }
         path.reverse()
         return path
-    }
-
-    private fun getLowestFCostNode(nodes: List<Node>): Node { // LAMBDA ONELINER?
-        var res = nodes[0]
-        for (i in nodes.indices) {
-            if (nodes[i].fCost < res.fCost)
-                res = nodes[i]
-        }
-        return res
     }
 }
